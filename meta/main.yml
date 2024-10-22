@@ -1,0 +1,40 @@
+galaxy_info:
+  author: Nho Luong
+  description: Transforms raw storage into a working mounted partition.
+  company: Nho Luong
+
+  license: Apache 2
+
+  min_ansible_version: 2.1
+
+  github_branch: master
+
+  platforms:
+  - name: EL
+    versions:
+    - 7
+  - name: Fedora
+    versions:
+    - 24
+  - name: Ubuntu
+    versions:
+  #  - all
+  #  - lucid
+  #  - maverick
+  #  - natty
+  #  - oneiric
+  #  - precise
+  #  - quantal
+  #  - raring
+  #  - saucy
+  #  - trusty
+  #  - utopic
+  #  - vivid
+  #  - wily
+    - xenial
+
+  galaxy_tags:
+      - mysql
+
+dependencies:
+    - { role: kurron.base }

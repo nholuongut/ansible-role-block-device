@@ -1,0 +1,43 @@
+---
+- name: Create file system
+  become: yes
+  command: "mkfs.{{bd_file_system}} -f -L {{bd_label}} {{bd_block_device}}"
+  when: bd_install
+
+- name: Create mount point
+  become: yes
+  file:
+      path: "{{bd_mount_point}}"
+      state: directory
+  when: bd_install
+
+- name: Mount the device
+  become: yes
+  mount:
+      name: "{{bd_mount_point}}"
+      src: "LABEL={{bd_label}}"
+      fstype: "{{bd_file_system}}"
+      opts: "{{bd_options}}"
+      state: mounted
+  when: bd_install
+
+- name: Check if inside AWS.
+  become: no
+  uri:
+      url: http://169.254.169.254/latest/meta-data
+      timeout: 2
+  register: aws_uri_check
+  failed_when: False
+
+- set_fact:
+      is_aws_environment: "{{ aws_uri_check.status == 200 }}"
+
+- name: Configure Read Ahead Block Size
+  become: yes
+  cron:
+      name: read-ahead
+      special_time: reboot
+      state: present
+      user: root
+      job: '/sbin/blockdev --setra 32 {{bd_block_device}}'
+  when: bd_install and is_aws_environment
